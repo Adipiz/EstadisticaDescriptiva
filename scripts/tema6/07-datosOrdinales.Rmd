@@ -1,0 +1,155 @@
+---
+title: '06-Estadíticas Descriptiva: Datos ordinales'
+author: "Alonso Pizarro Lagunas"
+date: "4/11/2021"
+output: html_document
+---
+
+## Estadística de datos ordinales
+
+ - Ejemplo 1: ajustando nivel ordenado de la variable ordinal
+ 
+```{r notas}
+ notas = ordered(c("S","A","N","Ex","S","S","Ex","Ex","N","A","A","A","A","N","S"), levels = c("S","A","N","Ex"))
+
+table(notas)
+
+```
+
+
+ - Frecuencia relativa acumulada
+ 
+$F_{j} = \frac{N_{j}}{n} = \sum_{i=1}^{j}{f_{j}}$
+
+
+   - Ejemplo 2
+   
+```{r ejemploClientes}
+
+set.seed(2018)
+clientes = sample(1:5,50, replace = TRUE)
+clientes = ordered(clientes, levels = 1:5)
+
+absol = (table(clientes))
+rela = prop.table(table(clientes))
+
+absol
+rela
+cumsum(absol)
+cumsum(rela)
+
+```
+
+
+  - Ejemplo 3: Función `cumsum()`
+  
+```{r cumsum, fig.align='center'}
+fAbs = table(notas)
+cumsum(fAbs)
+cumsum(prop.table(table(notas)))
+
+ # Gráfica
+par(mfrow = c(1,2))
+barplot(fAbs, main = "Diagrama de barras de\nfrecuencias absolutas")
+barplot(cumsum(fAbs), main = "Diagrama de barras de\n frecuencias absolutas acumuladas")
+
+```
+
+   - Ejemplo 4: Aplicaciones de función cumsum()
+
+```{r cumsum2}
+
+cumsum(table(notas))/length(notas)
+cumsum(table(notas)/length(notas))
+str(cumsum(table(notas)))
+cumsum(table(notas))
+prop.table(cumsum(table(notas)))
+```
+
+## Aplicación sobre tablas multidimensionales
+
+
+```{r apply}
+longitud = sample(1:5, 100, replace = TRUE)
+cuello = ordered(longitud, levels = c('1', '2', '3', '4', '5'))
+levels(cuello) = c('muy.corto','corto', 'normal','largo', 'muy.larg')
+zonas = rep(c("A","B","C","D"),c(30,25,35,10))
+jirafas = data.frame(zonas, cuello)
+jirafas$zonas = factor(jirafas$zonas)
+
+t(apply(table(jirafas), MARGIN = 1, FUN =cumsum))
+
+
+
+```
+
+  - Ejemplo 
+  
+```{r relative, fig.align='center'}
+t(apply(prop.table(table(jirafas), margin = 1), MARGIN = 1, FUN =cumsum))
+
+
+barplot(apply(prop.table(table(jirafas), margin = 1), MARGIN = 1, FUN =cumsum),
+        beside= T, args.legend = list(x = "topleft", cex = 0.50), legend = T)
+
+```
+
+
+
+## Ejemplo con data set de los cangrejos
+
+
+```{r crabs}
+
+crabs <- read.table("../../data/datacrab.txt", header = T)
+crabs <- crabs[,-1]
+str(crabs)
+```
+
+  - Creación de intervalos con la función `cut`
+
+```{r cut}
+
+intervalos <- cut(crabs$width, breaks = c(21,25,29,33,Inf), right = FALSE,
+                  labels = c('21-25', '25-29','29-33','33-...'))
+crabs$width.rank = ordered(intervalos)
+str(crabs)
+```
+
+  - Distribución de anchuras por color
+
+```{r anchuras, fig.align='center',fig.cap='Gráfica hecha por'}
+
+Tabla = table(crabs[,c(1,6)])
+Tabla
+
+
+# Frecuencia relativa por color
+
+Fr.rel <- round(prop.table(Tabla, margin = 1),3)
+Fr.rel
+
+# Frecuencia relativa acumulada
+
+t(round(apply(prop.table(Tabla, margin = 1), MARGIN = 1, FUN = cumsum),3))
+
+
+
+# Gráfico de diagrama de barras
+
+
+barplot(t(Fr.rel),beside = T, ylim = c(0,0.9), legend.text = T, 
+        col = c("violetred1","violetred2","violetred3","violetred4"),
+        main = "Diagrama de barras de frecuencias\n relativas color y peso",
+        xlab = "Número de colores", args.legend = list(x = 'topright' ,cex = 0.75)) 
+
+
+barplot(round(apply(prop.table(Tabla, margin = 1), MARGIN = 1, FUN = cumsum),3),beside = T, ylim = c(0,1), legend.text = T, 
+        col = c("violetred1","violetred2","violetred3","violetred4"),
+        main = "Diagrama de barras de frecuencias\n relativas acumuladad color y peso",
+        xlab = "Número de colores", args.legend = list(x = 'topleft' ,cex = 0.55)) 
+
+
+
+```
+

@@ -1,0 +1,81 @@
+---
+title: 'Datos de Pokemon'
+author: "*Alonso Pizarro Lagunas*"
+date: "*22/12/2021*"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+use_python("/../Users/sept/anaconda3/python")
+```
+
+
+# Trabajando con los datos de PoKemon
+
+## Limpieza de datos
+  
+```{python}
+import pandas as pd
+pokemon = pd.read_csv("C:/Users/sept/Desktop/Directorio/CIDE/Trabajos de R/Curso de R basic/data/Pokemon.csv")
+print(pokemon.head(5))
+print(pokemon.shape)
+
+# Primer filtro
+pokemon1 = pokemon[pokemon['Generation'] == 1]
+print(pokemon1.shape)
+
+# Ahora me quiero quedar con type I, type II and speed columns
+pokemon2 = pokemon1[['Type 1','Type 2','Speed']]
+print(pokemon2.shape)
+
+
+# Quiero eliminar las filas que no contienen datos
+pokemon3 = pokemon2.dropna()
+print(pokemon3.shape)
+```
+
+
+
+### Visualizando los datos de `Python` en `R`.
+
+```{r, fig.width=7, fig.height=4}
+
+hist(py$pokemon3[, "Speed"], breaks = 10, main = "Histograma de velocidades de \n los PoKemon", xlab = "Speed")
+```
+
+
+## Cargando los datos en `R`
+
+```{r}
+
+pokemon4 <- read.csv("../../data/Pokemon.csv", header = T)
+head(pokemon4,4)
+names(pokemon4)
+
+# Tidiverse
+
+library(tidyverse)
+
+# Filtrando
+
+pokemon4 <-  pokemon4 %>% 
+                      filter(Generation == 1) %>% 
+                      select(Type.1, Type.2, Generation, Speed) %>% 
+                      na.omit()
+
+class(pokemon4)
+```
+
+
+### Visualizando los datos de `R` en `Python`.
+
+```{python}
+print(r.pokemon4.head())
+```
+
+
+   
+   
+

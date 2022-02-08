@@ -1,0 +1,122 @@
+---
+title: "Ejemplo Final-Tema 6- v. Cualitativas"
+author: "Alonso Pizarro Lagunas"
+date: "2/11/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Ejemplo Final: Variables cualitativas
+
+
+## Agrupar color de ojos y pelo sin distinguir el sexo
+
+```{r }
+ftable(HairEyeColor)
+ male <-  HairEyeColor[ , , "Male"]
+female <- HairEyeColor[, , "Female"]
+data <- as.table(male+female)
+data
+```
+
+
+## Cambiando el nombre de los niveles
+
+```{r niveles}
+
+str(data)
+dimnames(data) <- list(
+  Pelo = c("Negro", "Café", "Rojo", "Rubio"),
+  Ojos = c("Café", "Azul", "Pardos", "Verdes")
+  )
+
+data
+```
+
+
+
+
+### Diagrama de Mosaico
+
+
+```{r mosaico}
+plot(data, main = "Diagrama de mosaico de la tabla bidimensional de\n frecuencias de colores cabellos y ojos", col = "lightblue")
+```
+
+
+
+### Resultados numéricos
+
+```{r numeric}
+
+sum(data)
+
+
+# tabla de frecuncias absolutas de cada variable
+
+apply(data, MARGIN = 1, FUN = sum)
+rowSums(data)
+apply(data, MARGIN = 2,  FUN = sum)
+colSums(data)
+
+# tabla de frecuencias relativas de cada variable
+
+apply(data, MARGIN = 1, function(x){sum(x)/sum(data)})
+prop.table(rowSums(data))
+
+apply(data, MARGIN = 2, function(x){sum(x)/sum(data)})
+prop.table(colSums(data))
+```
+
+
+## Ejemplo de los diagramas de barras
+
+
+```{r diagramas de barra}
+
+par(mfrow = c(1,2))
+
+barplot(apply(data, MARGIN = 2, function(x){sum(x)/sum(data)}), main = "Frecuencia relativa\n color de ojos", col = c("brown", "lightblue", "chocolate","lightgreen"), ylim = c(0, 0.4), cex.names = 0.8)
+
+barplot(prop.table(rowSums(data)), main = "Frecuencia relativa\n color de pelo",col = c("Black", "Brown", "red", "yellow"), ylim = c(0,0.5), cex.names = 0.8)
+```
+
+
+
+
+### Frecuencias relativas globales y marginales
+
+```{r relativaglobal}
+
+round(prop.table(data),3)
+
+```
+
+```{r relativa marginal}
+
+
+round(prop.table(data, margin = 1),3)
+round(prop.table(data, margin = 2),3)
+
+```
+
+
+
+```{r barplot2}
+
+par(mfrow = c(1,2))
+
+barplot(prop.table(data, margin = 1), beside = T, legend.text = T, col = c("black","brown","red","yellow"),
+        ylim = c(0,0.8), main = "Frecuencias relativas de cabello\n cada color de ojos", cex.names = 0.8)
+
+barplot(t(prop.table(data, margin = 2)), beside = T, legend.text = T, col = c("brown","lightblue","chocolate3",
+                                                                            "darkolivegreen3"),
+        ylim = c(0,0.8), main = "Frecuencias relativas de ojos\n cada color de cabello", cex.names = 0.8)
+```
+
+```{r}
+suma <- function(x,y){x + y}
+suma(2,3)
+```
+

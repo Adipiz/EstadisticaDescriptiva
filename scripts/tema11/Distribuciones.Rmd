@@ -1,0 +1,575 @@
+---
+title: 'Tema 11: Distribuciones'
+author: '*Alonso Pizarro Lagunas*'
+date: "8/12/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+# Distribuciones en *R* y *Python*
+
+Algunas funciones de *R* para cualquier variable aleatoria $v.a$
+
+   - `dva(x, ...)` se refiere a la función de densidad o probabilidad $f(x)$ de la $v.a$
+   - `pva(x, ...)` se refiere a la funcion de distribución $F(x)$ de la $v.a$  
+   - `qva(p, ...)` Cuantil $p$-ésimo de la $v.a$ (el valor de x más pequeño tal que $F(x) \ge p$)
+   - `rva(n, ...)` Generador de n observaciones siguiendo la distribución de la $v.a$
+
+En `va` debemos indicar la distribución. Por ejemplo si es una Bernoulli indicamos `dbern`, `pbern`, `qbern` y `rbern`. Para una normal `dnorm`, `pnorm`, `qnorm` y `rnorm`. Así, con todas las distribuciones.    
+   
+   
+Algunas funciones de *Python* para cualquier variable aleatoria $v.a$
+
+   - `pmf(k, ...)` o `pdf(x, ...)` se refiere a la función de densidad ($f(x)$) o probabilidad $f(k)$ de la $v.a$
+   - `cdf(x, ...)` se refiere a la funcion de distribución $F(x)$ de la $v.a$  
+   - `ppf(p, ...)` Cuantil $p$-ésimo de la $v.a$ (el valor de x más pequeño tal que $F(x) \ge p$)
+   - `rvs(size, ...)` Generador de *size* observaciones siguiendo la distribución de la $v.a$
+
+
+
+## Distribución de Bernoulli
+
+Si $X$ es una $v.a$ que mide el número de éxitos (fracasos) y se realiza un único experimento diremos que $X$ se distribuye como una Bernoulli con parámetro $p$ $$X \sim Be(p)$$ donde $q = 1-p$ es la probabilidad de fracaso.
+
+  - El *dominio* de $X$ es $X(\Omega)= \{0,1\}$
+
+  - La *función de probabilidad* es $$f(k)=p^k\cdot (1-p)^{1-k}$$
+
+  - La *función de distribución* es 
+
+$$F(k)=\left\{ \begin{array}{ll}
+0 & \mbox{si $k<0$} \\
+q & \mbox{si $0\le k <1$} \\
+1 & \mbox{si $k\ge1$}
+\end{array}
+\right.$$
+
+  - Con *Esperanza* $E(X)= p$ y *Varianza* $Var(X) = pq$
+
+
+### Un ejemplo con la distribución Bernoulli en R
+
+
+Sea $X \sim Be(p =0.7)$, la distribución que modela la probabilidad de obtener una cara usando una moneda trucada.
+```{r Bernoulli}
+library(Rlab) # Recordamos cargar el paquete Rlab que contiene toda la info sobre distribuciones
+
+dbern(0, prob = 0.7) # Prob de sacar 0, f`n densidad
+dbern(1, prob = 0.7) # Prob de sacar 1, f`n densidad
+
+pbern(0, prob = 0.7) # F`n acumulada
+pbern(1, prob = 0.7) # F`n acumulada
+
+
+qbern(0.5, prob = 0.7) # segundo cuartil
+qbern(0.25, prob = 0.7) # primer cuartil
+
+data <- rbern(100, prob = 0.7) # Generemos 100 números aleatorios con esta distribución
+hist(data) # Visualizamos los datos en un histograma 
+```
+
+   
+### Un ejemplo con la distribución Bernoulli en Python
+
+```{python}
+
+from scipy.stats import bernoulli
+import matplotlib.pyplot as plt
+p = 0.7
+mean, var, skew, kurt = bernoulli.stats(p, moments = 'mvsk')
+print("Media %f"%mean)
+print("Varianza %f"%var)
+print("Sesgo %f"%skew)
+print("Curtosis %f"%kurt)
+
+
+fix, ax = plt.subplots(1,1)
+x = bernoulli.rvs(p,size=1000)
+ax.hist(x)
+plt.show()
+```
+
+   
+## Distribución Binomial
+
+Si $X$ es una $v.a$  que mide el número de éxitos y se realizan n ensayos Bernoulli independientes entre sí diremos que $X$ se distribuye como una binomial con parámetros n y p $$X \sim B(n,p)$$ donde p es la probabilidad de éxito y $q=1-p$ es la probabilidad de fracaso.
+
+
+  - El *dominio* de $X$ será $D_{X} = \{0,1,2,...,n\}$
+
+  - La *función de densidad* viene dada por $$f(k) = {n \choose k} p^k (1-p)^{n-k}$$
+
+  - La *función de distribución* viene dado por  $$F(x)=\left\{ \begin{array}{ll}
+0 & \mbox{si $x<0$} \\
+\sum_x^{k=0}f(k) & \mbox{si $0\le x <1$} \\
+1 & \mbox{si $x \ge n$}
+\end{array}
+\right.$$
+
+  - Con una *Esperanza* igual a $E(X)=np$ y una *Varianza* igual a $Var(X) = npq$.  
+
+
+### Un ejemplo de la distribución binomial en R.
+
+Sea $X \sim B(n = 30, p = 0.6)$
+
+```{r binom}
+
+n =30
+p =0.6
+plot(0:30,dbinom(0:30, size = n, prob =p))
+plot(0:n, pbinom(0:n, size = n, prob = p))
+qbinom(0.5, n, p)
+qbinom(0.25, n, p)
+hist(rbinom(100000, n, p), breaks =0:30)
+```
+
+
+### Un ejemplo de la distribución binomial en Pyhton.
+
+```{python 2}
+from scipy.stats import binom
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots()
+n = 7
+p = 0.4
+
+mean, var, skew, kurt = binom.stats(n, p, moments = 'mvsk')
+print("Media %f"%mean)
+print("Varianza %f"%var)
+print("Sesgo %f"%skew)
+print("Curtosis %f"%kurt)
+
+
+x = np.arange(0,n+1) 
+ax.plot(x, binom.pmf(x,n,p),'bo',ms = 8, label = 'Funcion de densidad B(7, 0.4)') 
+ax.vlines(x, 0, binom.pmf(x,n,p), colors = 'b', lw = 4, alpha = 0.5)
+
+rv = binom(n,p)
+ax.vlines(x,0, rv.pmf(x), colors ='k', linestyles = '--', lw = 1, label ='Distribucion teorica')
+ax.legend(loc = 'best', frameon = False)
+ax.set_title(r'Distribucion Binomial')
+plt.show()
+
+
+fig, ax = plt.subplots(1,1)
+r = binom.rvs(n,p, size = 1000)
+ax.hist(r, bins = n)
+plt.show()
+```
+
+
+Podemos encontrar más información sobre la visualización en la página de [Matplotlib](https://matplotlib.org/stable/gallery/lines_bars_and_markers/fill_between_alpha.html#sphx-glr-gallery-lines-bars-and-markers-fill-between-alpha-py) y más.
+
+
+## Distribución Geométrica
+
+Sea $X$ una $v.a$ que mide el número de repeticiones independientes del experimento  hasta haber conseguido un éxito diremos que $X$ se distribuye como una Geométrica con parámetro $p$  $$X \sim Ge(p)$$ donde $p$ es la probabilidad de éxito y $q = 1-p$ es la probabilidad de fracaso. 
+
+  - El *dominio* de $X$ es $D_X=\{0,1,2, ... \}$ o bien $D_X = \{1,2,...\}$ si comienza con cero o comienza en uno.
+
+  - La *función de densidad*  viene dada por $$f(k)=(1-p)^k$$ si comienza en cero o $$f(k)=(1-p)^{k-1}\cdot p$$ si comienza con 1.
+
+
+  - La *función de distribución* viene dado por $$F(x)=\left\{ \begin{array}{ll}
+0 & \mbox{si $x<0$} \\
+1-(1-p)^{k+1} & \mbox{si $k\le x <k+1, k \in \mathbb{N}$}
+\end{array}
+\right.$$
+
+  - La *esperanza* $E(X) = \frac{1-p}{p}$ si comienza en 0 y $E(X)=\frac{1}{p}$ si es uno.
+
+  - La *varianza* es $Var(x) = \frac{1-p}{p^2}$.
+
+
+### Un ejemplo en R
+
+Sea $X \sim Ge(p = 0.1)$ las distribución que modela la probabilidad de abrir una puerta hasta conseguirlo.
+
+```{r Geom}
+p = 0.1
+par(mfrow=c(1,2))
+plot(0:20,dgeom(0:20, p)) # Función de densidad
+plot(0:20,pgeom(0:20, p), ylim = c(0,1)) # Función distribución
+qgeom(0.5,p) # Cuantiles 
+qgeom(0.75,p)
+rgeom(10, p) # generamos datos aleatorios de esta dist (hasta el éxito)
+hist(rgeom(10000, p)) # un histograma con 10000 experimentos
+```
+
+
+### Un ejemplo en python
+
+```{python}
+
+from scipy.stats import geom
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots(1,1)
+p = 0.3
+mean, var, skew, kurt = geom.stats(p, moments='mvsk')
+
+print("Media %f"%mean)
+print("Varianza %f"%var)
+print("Sesgo %f"%skew)
+print("Curtosis %f"%kurt)
+
+x = np.arange(geom.ppf(0.01,p), geom.ppf(0.99,p))
+ax.plot(x,geom.ppf(x,p), 'bo', ms = 8, label = "Distribucion $Ge(p = 0.3)$")
+ax.vlines(x,0, geom.pmf(x,p), colors = 'b', lw = 4, alpha = 0.5)
+
+
+
+rv = geom(p)
+ax.vlines(x,0, geom.pmf(x,p), colors = 'k', linestyles = '--', lw = 1, label = 'Frozen PMF')
+ax.legend(loc = 'best')
+plt.show()
+
+
+
+fig, ax = plt.subplots(1,1)
+prob = (geom.cdf(x,p))
+ax.plot(x, prob, 'bo', ms = 7, label = 'Funcion de distribucion acumulada')
+plt.show()
+
+
+fig, ax = plt.subplots(1,1)
+r = geom.rvs(p, size = 10000)
+plt.hist(r)
+plt.show()
+
+```
+
+
+## Distribución  Hipergeométrica
+
+Consideremos un experimento de extraer, una detrás de otra sin reemplazo,  $n$ objetos donde hay $N$ de tipo A y $M$ de tipo B. Si $X$ es una $v.a$ que mide el "el número de objetos del tipo $A$" diremos que $X$ se distribuye como una hipergeométrica con parámeros $N, M y \ n$.
+
+El dominio de $X$ será $D_X = \{0,1,2,...,N\}$
+
+ 
+  - La *función de densidad* vendrá dado por $$f(k)= \frac{{N \choose k}{M \choose{n-k}}}{{N+M \choose n}}$$ 
+
+
+  - La *función de distribución* viene dada por 
+
+$$F(x)=\left\{ \begin{array}{ll}
+0 & \mbox{si $x<0$} \\
+\sum_{k=0}^x f(x) & \mbox{si $0\le x <n$} \\
+1 & \mbox{si $x \ge n$}
+\end{array}
+\right.$$
+
+
+Con una *Esperanza* $E(X) = \frac{nN}{N+M}$ y una *Varianza* $Var(X) = \frac{nNM}{(N+M)^2} \cdot \frac{N+M-n}{N+M-1}$
+
+### Un ejemplo de distribución Hipergeométrica en `R`.
+
+Suponga que tenemos 20 animales de los cuales 7 son perros. Queremos medir la probabilidad de encontrar un número determinado de perros si elegimos $k=12$ animales al azar.
+
+
+```{r hipergeometrica}
+
+# dhyper gives the density, phyper gives the distribution function,
+# qhyper gives the quantile function, and rhyper generates random deviates.
+
+x = 12
+M = 7
+N = 13
+
+dhyper(x = 0:12, m = M, n = N, k = 12)
+plot(x = 0:12, dhyper(x = 0:12, m = M, n = N, k = 12))
+phyper(q = 0:12, m =M, n = N, k = 12)
+qhyper(p = 0.5, m = M, n = N, k = 12)
+datos <- rhyper(nn = 10000, m = M, n = N,  k=12)
+
+hist(datos, breaks = 8)
+```
+
+
+### Un ejemplo de distribución Hipergeométrica en `Python`.
+
+```{python}
+
+from scipy.stats import hypergeom
+import matplotlib.pyplot as plt 
+import numpy as np
+
+[M, n, N] = [20,7,12]
+
+rv = hypergeom(M, n, N)
+x = np.arange(0, n+1)
+y = rv.pmf(x)
+
+mean, var, skew, kurt = rv.stats(moments='mvsk')
+
+print("Media %f"%mean)
+print("Varianza %f"%var)
+print("Sesgo %f"%skew)
+print("Curtosis %f"%kurt)
+
+fig = plt.figure()
+ax = fig.add_subplot(111) 
+ax.plot(x,y,'bo')
+ax.vlines(x, 0,y, lw =2, alpha = 0.4)
+ax.set_ylabel('Distribucion de probabilidades de H(13,7,12)')
+ax.set_xlabel('Numero de perros entre los doce elegidos al azar')
+plt.show()
+```
+
+
+## Distribución de Poisson
+
+
+Si $X$ es una $v.a$ que mide el número de eventos en un cierto intervalo de tiempo, diremos que $X$ se distribuye como una Poisson con parámetro $\lambda$ $$X \sim Po(\lambda)$$ donde $\lambda$ representa el número de veces que se espera que ocurra el evento en un intervalo dado.
+
+   - El *dominio* de $X$ será $D_X = \{0,1,2,..\}$
+   
+   - La *función  de densidad* viene dada por $$f(k) = \frac{e^{-\lambda} \lambda^{k}}{k¡}$$
+ 
+
+   - La *función de distribución* viene dada por 
+   
+   $$F(x)= \left\{ \begin{array}{ll}
+0 & \mbox{si $x<0$} \\
+\sum_{k=0}^x f(k) & \mbox{si $0\le x <n$} \\
+1 & \mbox{si $x \ge n$}
+\end{array}
+\right.$$
+
+
+   - La *Esperanza*  viene dada por  $E(X)= \lambda$ y la varianza $Var(X)= \lambda$
+   
+### Un ejemplo de la distribución de Poisson en `R`
+
+Supongamos que $X$ modela el número de errores de edición que tiene una página cuyo valor esperado es $\lambda = 5$.
+
+```{r Poisson}
+
+lambda = 5
+plot(dpois(x =0:20, lambda = lambda),
+     main = 'Distribución de Poisson con parámetro lambda = 5',
+     xlab = 'Número de errores',
+     ylab = 'Probabilidad')
+ppois(0:20, lambda = lambda)
+qpois(0.5, lambda = lambda)
+qpois(0.75, lambda = lambda)
+rpois(1000, lambda = lambda) -> data
+hist(data)
+
+```
+   
+### Un ejemplo de la distribución de Poisson en `Pyhton`
+
+
+```{python}
+import matplotlib.pyplot as plt
+from scipy.stats import poisson
+import numpy as np
+
+fig, ax = plt.subplots(1,1)
+mu = 5
+
+mean, var, skew, kurt = poisson.stats(mu, moments = "mvsk")
+print("Media %f"%mean)
+print("Varianza %f"%var)
+print("Sesgo %f"%skew)
+print("Curtosis %f"%kurt)
+
+x = np.arange(0, 12)
+ax.plot(x, poisson.pmf(x, mu), 'bo', ms = 8, label = 'Poisson(0.8)')
+ax.vlines(x,0, poisson.pmf(x, mu), colors = 'b', lw = 8, alpha = 0.5)
+ax.legend(loc = 'best', frameon = False)
+plt.show()
+
+```
+
+
+
+## Distribución Binomial Negativa
+
+Si $X$ es una $v.a$ que mide el número de repeticiones hasta observar los $r$ éxitos en ensayos Bernoulli, diremos que $X$ se distribuye como una Bionomial Negativa con parámetros $r$ y $p$. $$X \sim BN(r,p)$$ donde $p$ es la probabilidad de éxito. 
+
+   - El *dominio* de $X$ es $D_X = \{1,2,...\}$
+  
+   - La *función de densidad* viene dado por $f(k)= {{k-1}\choose{r-1}} p^{r}(1-p)^{k-r}, k\ge r$ 
+
+   - La **FUNCIÓN DE DISTRIBUCIÓN** no tiene una expresión analítica.
+   
+   - La *Esperanza* es $E(X)=\frac{r}{p}$ y *Varianza* $Var(X) = r\frac{1-p}{p^2}$
+   
+   
+### Un ejemplo en `R`.
+
+```{r BinomialNegativa}
+
+dnbinom(4, 3, 0.2)
+plot(0:10, dnbinom(x = 0:10, size = 3, prob = 0.5))
+plot(0:25, pnbinom(q = 0:25, size = 3, prob = 0.5))
+
+```
+
+Está función representa la probabilidad de *x fallas previas a r éxitos* cuando la probabilidad de éxito es `prob`.
+
+> This represents the number of failures which occur in a sequence of 
+ Bernoulli trials before a target number of successes is reached. The mean 
+ is μ = n(1-p)/p and variance n(1-p)/p^2.
+ 
+
+
+
+## Distribución Uniforme
+
+
+
+*Función de desidad* $f = \frac{1}{b-a}$
+
+Ejemplo de una distribución uniforme.
+
+Supongamos que $X\sim U([0,1])$ entonces podemos estudiar sus parámetros
+
+### Ejemplo en `R`
+
+```{r distrUnif}
+
+a = 0
+b = 1
+
+x = seq(-0.1, 1.1, 0.05)
+
+dunif(x, min = a, max = b)
+plot(x, dunif(x, min = a, max = b))
+
+punif(x, a,b)
+plot(punif(x, a,b), type= "l")
+
+qunif(0.5, a,b)
+
+hist(runif(100000,a,b), main = "Histograma de datos de una distribución\n uniforme U([0,1])")
+```
+
+
+## Ejemplo en `Python`
+
+```{python, distUnif}
+from scipy.stats import uniform
+import matplotlib.pyplot as plt
+import numpy as np
+
+a = 0
+b = 1
+
+loc = a
+scale = b-a
+
+fig, ax = plt.subplots(1,1)
+
+mean, var, skew, kurt = uniform.stats(moments = 'mvsk')
+
+print("Media %f"%mean)
+print("Varianza %f"%var)
+print("Sesgo %f"%skew)
+print("Curtosis %f"%kurt)
+
+rv = uniform(loc = loc, scale = scale)
+x = np.linspace(-0.1,1.1, 120)
+x
+ax.plot(x, rv.pdf(x), 'k-', lw = 2, label = "U(0,1)")
+
+
+r = rv.rvs(size = 1000)
+ax.hist(r, density = True, histtype = "stepfilled", alpha = 0.45)
+ax.legend(loc = 'best', frameon = False)
+plt.show()
+
+
+
+```
+
+
+
+
+
+## Distribución Exponencial
+
+Una $v.a \ X$ tiene una distribución exponencial de parámetro $\lambda$, $X \sim Exp(\lambda)$, su función de densidad es 
+
+$$f_X X = \left\{ \begin{array}{ll}
+0 & \mbox{si $x \le 0$} \\
+\lambda \cdot e^{-\lambda x}\mbox{si $x > 0$}}
+\end{array}
+\right.$$
+
+
+   - El *dominio* de $X$ será $D_X = [0, \infty)$
+   
+   - La *Función de distribución* viene dada por $$f_X X = \left\{ \begin{array}{ll}
+0 & \mbox{si $x \le 0$} \\
+1 - \lambda \cdot e^{-\lambda x}\mbox{si $x > 0$}}
+\end{array}
+\right.$$  
+
+   - La *Esperanza* $E(X) = \frac{1}{\lambda}$ y *Varianza* $Var(X)=\frac{1}{\lambda^2}$
+   
+
+
+### Ejemplo de una distribución Exponencial en `R`
+
+
+```{r distExp}
+
+lam = 1/140
+x = seq(0.0,400.0,0.001 )
+
+plot(x, dexp(x, rate = lam), type = 'o')
+
+plot(x, pexp(x, rate = lam), col = 'purple', type = 'o')
+
+qexp(0.9, rate = lam)
+
+rexp(n = 100000, rate = lam) -> data
+
+hist(data, prob = TRUE)
+lines(x,dexp(x, rate = lam), col = 'red', lw = 3)
+
+```
+
+
+
+
+### Ejemplo una distribución exponencial en `Python`
+```{python}
+from scipy.stats import expon
+import numpy as np
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1,1)
+lam = 10
+rv = expon(scale = 1/lam)
+
+mean, var, skew, kurt = rv.stats(moments = 'mvsk')
+
+print("Media %f"%mean)
+print("Varianza %f"%var)
+print("Sesgo %f"%skew)
+print("Curtosis %f"%kurt)
+
+
+x = np.linspace(0,2, 1000)
+ax.plot(x, rv.pdf(x), 'r-', lw = 5, alpha = 0.6, label = 'EXP(10)')
+
+r = rv.rvs(size = 1000000)
+ax.hist(r, density = True, histtype = 'stepfilled', alpha = 0.45)
+
+plt.show()
+
+```
+   
+   
+
+

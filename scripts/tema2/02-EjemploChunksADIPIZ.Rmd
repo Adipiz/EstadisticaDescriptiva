@@ -1,0 +1,127 @@
+---
+title: "Tema 2: chunks"
+author: "Alonso Pizarro Lagunas"
+date: "13/10/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+# Chunks 
+
+```{r NOMBRE1}
+summary(cars)
+```
+
+
+
+## Nuestras propias Chunks
+
+En caso de escribir en el texto pueso declarar: 
+Voy a calcular  $\sqrt(3) - e^{-2}$:
+
+
+```{r NOMBRE2}
+sqrt(3) - exp(-2)
+```
+
+* Parámetros de los chunks 
+    + echo = TRUE, muestra el code y el resultado 
+```{r NOMBRE3, echo = TRUE}
+sqrt(3) - exp(-2)
+```
+      
+* Parámetros de los chunks       
+    +  echo = FALSE, sólo muestra el resultado
+```{r NOMBRE4, echo = FALSE}
+sqrt(3) - exp(-2)
+```   
+
+* Parámetro eval
+    + eval = FALSE, no evalua la instrucción (Con echo = TRUE).
+
+```{r NOMBRE5, echo = TRUE, eval = FALSE}
+sqrt(3) - exp(-2)
+```       
+
+* Parámetro eval
+    + eval = FALSE,evalua la instrucción (con echo = TRUE).
+```{r NOMBRE6, echo = TRUE, eval = TRUE}
+sqrt(3) - exp(-2)
+```      
+    
+* Parámetro message
+    + message = TRUE, nos muestra los mensajes de R que se producen al ejecutar el code.
+    
+```{r NOMBRE7, message=TRUE}
+library(magic)
+magic(6)
+```
+* Parámetro message
+    + message = FALSE, NO nos muestra los mensajes de R que se producen al ejecutar el code.
+```{r NOMBRE8, message=FALSE}
+library(magic)
+magic(6)
+```    
+
+* Parámetro comment
+    + comments = NA, NO nos muestra los hashtags del código y mensajes.
+    
+```{r NOMBRE9, message=TRUE, comment = NA}
+library(magic)
+magic(6)
+```    
+
+* Parámetro results: cómo queremos ver el resultado
+    + `results = 'hide'`. No muestra el resultado. (ojo que sí lo evalúa)
+    ```{r NOMBRE10, message=TRUE, comment = NA, results='hide'}
+library(magic)
+magic(6)
+```    
+   
+* Parámetro results: cómo queremos ver el resultado   
+   + results = 'markup'. Valor por defecto. Nos muestra los valores línea a lína
+    ```{r NOMBRE11, message=TRUE, comment = NA, results='markup'}
+library(magic)
+magic(6)
+```  
+
+* Parámetro results: cómo queremos ver el resultado   
+    + results = 'asis'. Devuelve los resultados línea a línea de manera literal y el doc final los presenta como texto
+```{r NOMBRE12, message=TRUE, comment = NA, results='asis'}
+library(magic)
+magic(6)
+```  
+
+* Parámetro results: cómo queremos ver el resultado     
+    + results = 'hold'. Muestra todos los resultados al final del bloque de código.
+
+```{r NOMBRE13, message=TRUE, comment = NA, results='hold'}
+sqrt(3) - exp(-2)
+rnorm(10)
+```     
+
+
+## Los chunks en modo línea
+
+* Podemos agregar un chunk entre líneas:
+
+    + En $\LaTeX$: $\sqrt{2}$
+    + En `R` haciendo `r sqrt(2)`
+    + La frase completa es: $\sqrt{2}=$ `r sqrt(2)`
+    + El número $\pi$ comienza con `r pi`
+    + La raíz sexta de 156 es `r 156^(1/6)` , lo que equivale a $\sqrt[6]{156}=$ `r 156^(1/6)`.
+    
+```{r prueba, results='hide', echo = FALSE}
+notas = c(3,5,7,7,9,10,10,8,8.5)
+media = mean(notas)
+n = length(notas)
+desv.tip = sd(notas)
+```
+    
+Este año he hecho $n=$ `r n` exámenes con una media $\overline{x}=$ `r round(media,2)` y una desviación típica $s =$ `r round(desv.tip,2)`.
+
+
+
+

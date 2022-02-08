@@ -1,0 +1,23 @@
+\frametitle{Cómo escribir}
+\protect\hypertarget{cuxf3mo-escribir}{}
+
+Para escribir fórmulas matemáticas bien formateadas utilizaremos la
+sintaxis \(\LaTeX\)
+
+\begin{itemize}
+\tightlist
+\item
+  Para tener ecuaciones o fórmulas en el mismo párrafo, escribimos
+  nuestro código entre dos símbolos de dólar:
+  \texttt{\$}código\texttt{\$}
+\item
+  Si queremos tener ecuaciones o fórmulas centradas en un párrafo
+  aparte, escribimos nuestro código entre dos dobles símbolos de dólar:
+  \texttt{\$\$}código\texttt{\$\$}
+\end{itemize}
+
+¡Cuidado! Al escribir una fórmula de la forma indicada anteriormente o
+simplemente texto en R Markdown, los espacios en blanco son
+completamente ignorados. RStudio solamente añade los espacios en blanco
+a partir del significado lógico de sus elementos.
+

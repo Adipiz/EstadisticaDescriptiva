@@ -1,0 +1,37 @@
+---
+title: "Vuelos"
+author: "Alonso Pizarro Lagunas"
+date: "22/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+use_python("/../Users/sept/anaconda3/python")
+```
+
+# Vuelos de New York City
+
+```{r}
+data <- nycflights13::flights
+head(data,5) 
+```
+
+
+```{python}
+pydata = r.data
+pydata = pydata[pydata["dest"] == "ORD"]
+pydata = pydata[["carrier","dep_delay", "arr_delay","origin"]]
+print(pydata.shape)
+pydata.dropna()
+print(pydata.head())
+print(pydata.shape)
+pydata = pydata[pydata["dep_delay"] <6*60]
+```
+
+```{r}
+head(py$pydata,4)
+boxplot(dep_delay~origin, data = py$pydata, main = "Atrasos en las salidas")
+```
+

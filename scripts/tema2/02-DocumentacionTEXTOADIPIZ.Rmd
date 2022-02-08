@@ -1,0 +1,110 @@
+---
+title: 'Tema 2: Documentación'
+author: "Alonso Pizarro Lagunas"
+date: "13/10/2021"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+# Título 1
+
+## Título 2
+
+### Título 3
+
+#### Título 4
+
+##### Título 5
+
+
+
+
+.
+
+Luego podemos añadir texto y trozos de código de `R` y lo que quieramos en \LaTeX.
+
+Esto es una nueva línea de texto. Para separ los párrafos ocupar doble intro.
+
+Ahora queremos utilizar letras cursivas. Poner texto entre asteriscos o barras bajas.
+_Esto es un texto en cursiva_ o *esto es un texto en cursiva*
+
+
+También podemos hacerlos para las letras en negrita. Usando doble barra baja o doble asteristo. Como por ejemplo: __Este es un texto escrito entre doble barra baja__ o      **este es un texto entre doble asteriscos**.
+
+
+Los superíndices van con el *sombrerito*, recordemos cerrar: un valor al cuadrado x^2^.
+
+Para tachar una palabra usamos la doble tilde: ~~Las mates son complicadas~~.
+
+Puedo visitar una página de internet, por ejemplo, [El mercurio online](https://www.emol.com/) correspondiente al periodico nacional.
+
+endash: -- Y entonces, declaró: ...
+
+emdash: ...--- regida por la santa inquisición.
+
+elipsis: ... 
+
+Ecuaciones en línea $S = \pi\cdot r^2$
+
+
+Ahora podemos agregar una imagen
+
+<center>
+![Logo del globo aerostático](C:\Users\sept\Desktop\Directorio\CIDE\Trabajos de R\Curso de R basic\teoria\Imgs\LogoCurso.png){width=50px}
+</center>
+
+
+***
+
+Aquí empezamos otra sección
+
+> Este es una cita en bloque
+
+
+### Listas no ordenadas 
+
+* Item primero
+
+* Item segundo
+   + sub ítem 2.1
+   + sub ítem 2.2 
+   
+* Item tercero
+
+### Listas ordenadas
+
+1. Primer Ítem
+
+2. Segundo Ítem
+    + Sub ítem 1 de 2
+    + Sub ítem 2 de 2
+    
+3. Tercer Ítem
+  
+  
+  
+### Tablas
+
+Alumno                |  Nota      |  Edad
+----------------------|------------|--------
+Alonso                |      80    |   18
+Juan                  |      85    |   20
+Diego                 |      77    |   17
+Alemania              |      80    |   21
+
+#### Alineación diferente
+
+
+
+### Tablas
+
+|Alumno                |   Nota      |  Edad|
+|----------------------|:------------:|:--------:|
+|Alonso                |     80    |   18|
+|Juan                  |      85    |   20|
+|Diego                 |      77    |   17|
+|Alemania              |      80    |   21|
+
+

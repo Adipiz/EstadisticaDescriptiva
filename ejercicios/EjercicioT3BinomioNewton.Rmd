@@ -1,0 +1,46 @@
+---
+title: 'Tema 3: Ejemplo binomio de Newton'
+author: "Alonso Pizarro Lagunas"
+date: "14/10/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Producto notable
+
+La fórmula del producto notable es:
+
+$$(a+b)^2 = a^2 + 2 \cdot a \cdot b + b^2$$
+
+```{r BinomioNew2}
+BinomioNewton2 <- function(a,b){
+  a^2+2*a*b+b^2
+}
+
+BinomioNewton2(1,2)
+BinomioNewton2(1,3)
+```
+
+
+# Bionomio de Newton 
+
+
+## Fórmula general:
+
+$$(a+b)^n=  \sum_{k = 0}^n {n\choose k}\cdot a^{n-k}\cdot b^k = {n\choose 0} \cdot a^n \cdot b^0 + {n\choose 1} \cdot a^{n-1} \cdot b^1 + \cdots +{n\choose n} a^0 \cdot b^n$$
+
+## Función con R del binomio de Newton
+
+
+```{r BinomiodeNewtonN}
+Binom_Newton <- function(a,b,n){
+  c<- cumsum(choose(n, 0:n) * a^{n-(0:n)}* b^(0:n))
+  c[n+1]
+}
+
+Binom_Newton(4,2, n = 2)
+```
+
+
+

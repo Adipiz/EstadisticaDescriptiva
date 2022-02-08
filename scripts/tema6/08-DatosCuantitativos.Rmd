@@ -1,0 +1,316 @@
+---
+title: "08 - Datos Cuantitativos"
+author: "*Alonso Pizarro Lagunas*"
+date: "*5/11/2021*"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Datos cuantitativos
+
+  - Ejemplo 1
+
+```{r freq}
+
+edad <- c(15,18,25,40,30,29,56,40,13,27,42,23,11,26,25,32,30,40,33,29)
+table(edad)              # Frecuencias absolutas
+prop.table(table(edad))  # Frecuencias relativas
+cumsum(table(edad))      # Frecuencias acumuladas
+cumsum(prop.table(table(edad)))  # Frecuencias relativas acumuladas
+```
+
+  - Ejemplo 2
+     
+        - Ejemplo con dados.
+        
+```{r ejemplo dados}
+set.seed(161720)
+dados <- sample(1:6,25, replace = TRUE)
+dados
+
+table(dados) # frecuencia absoluta
+prop.table(table(dados)) # frecuencia relativa
+cumsum(table(dados)) # frecuencia absoluta acumulada
+cumsum(prop.table(table(dados))) # frecuencia relativa acumulada
+```
+  
+  - Construyendo un data frame con los datos con la stablas anteriores. Transformamos a vector para no arrastrar la primera fila.
+  
+```{r dataframe}
+
+dados.df <- data.frame(Puntuacion = 1:6,
+                       Fr.Abs = as.vector(table(dados)),
+                       Fr.Rel = as.vector(prop.table(table(dados))),
+                       Fr.Abs.Cum = as.vector(cumsum(table(dados))),
+                       Fr.Rel.Cum = as.vector(cumsum(prop.table(table(dados)))))
+dados.df
+```
+    
+ 
+ 
+ 
+ 
+# Medidas de tendencia central o centralización
+ 
+ 
+```{r MDTC}
+
+sort(edad)  # 'lista' de valores ordenados
+moda <- as.numeric(names(table(edad)[which(table(edad) == max(table(edad)))])) # moda
+mediana <- median(edad)
+media <- mean(edad)
+```
+
+  - La *moda* es `r moda`, la *mediana* es  `r mediana` y la *media* es `r media`
+ 
+ 
+## Las diferentes medias  
+
+```{r medias}
+
+x <- c(32,45,67,43,28,17,48,95)
+n <- length(x)
+```
+
+ - El vector es `r x` cuya longitud es `r n` observaciones.
+ 
+ 
+#### Algunas fórmulas
+  
+  - *Media*: $$\bar{x}= \frac{1}{n} \sum_{i=1}^n x_i$$
+
+```{r ejemplomedia}
+    
+sum(x)/n
+```
+    
+  - *Media ponderada*: $$\bar{X}_w = \frac{X_1w_1 + X_2w_2 + ...+X_nw_n}{w_1 + w_2 +...+w_n} = \frac{\sum_{i=1}^n X_i \cdot w_i}{\sum_{i = 1}^n w_i}$$
+         
+      
+```{r mediaponderad}
+
+w = c(1,2,2,3,3,2,2,1)
+sum(x*w)/sum(w)
+```
+  
+  - *Media geométrica*: $$\bar{X}_g= \left(\prod_{i=1}^n x_i\right)^{1/n}$$
+         
+      
+```{r mediaGeometrica}
+
+prod(x)^(1/n)
+```
+    
+   - *Media armónica*: $$\bar{x}_A= \frac{n}{\sum_{i=i}^n \frac{1}{x_i}}$$ 
+
+```{r mediarmonica}
+
+n/sum(1/x)
+
+```
+
+
+    
+# Medidas de posición 
+
+
+## Cuantiles
+
+
+
+```{r CUANTILES}
+
+set.seed(260798)
+dado = sample(1:4, 50, replace = T)
+length(dado)
+
+# Ordenamos los dado
+dado = sort(dado)
+
+# Cuantile 0.3
+
+dado[15]
+
+```
+
+   - Cuartiles $Q_{0.25}$, $Q_{0.5}$ y $Q_{0.75}$. Son los llamados primer, segundo y tercer cuartil. El primer cuartril es mayor o igual a un cuarta parte de la muestra.
+  
+   - Los deciles son los cuantiles $Q_p$ con $p$ múltiplo de 0.1.
+   
+   - Los percentiles son los cuantiles $Q_p$ con $p$ múltiplo de 0.01. 
+   
+     - Ejemplo
+```{r quantile}
+
+
+set.seed(0)
+dados2 = sample(1:6,15, replace = TRUE)
+dados2
+
+set.seed(NULL)
+quantile(dados2,0.25) # Primer Cuartil
+
+quantile(dados2, 0.8) # Octavo Decil
+
+```
+   
+   
+
+# Medidas de dispersión
+
+  - Rango o recorrido `diff(range(x))`
+  - Rango Intercuartílico `IQR(x,type = ...)`
+  - Varianza `var(x)`
+  - Desviación típica `sd(x)`
+  - Varianza muestral `var(x)*(length(x)-1)/length(x)`
+  - Desviación típica muestral `sd(x)*sqrt((length(x)-1)/length(x))`
+  
+  
+  
+```{r dispersion}
+
+
+
+diff(range(dados2)) # Rango
+IQR(dados2) # rango intercuartílico
+var(dados2) # Varianza
+sd(dados2) # desviación típica
+
+
+n = length(dados2)
+var(dados2)*(n-1)/n   # Varianza muestral
+
+
+sd(dados2)*sqrt((n-1)/n) # sd muestral
+
+```
+
+
+### Funciones interesantes para trabajar con variables cuantitativas
+
+  - Resumen estadístico `summary(x)`
+  
+```{r crabs2}
+
+cangrejos = read.table("../../data/datacrab.txt", header = T)
+cangrejos = cangrejos[,-1]
+summary(cangrejos)
+
+summary(subset(cangrejos, color == 3, c("weight","width")))
+summary(subset(cangrejos, color == 5, c("weight","width")))
+```
+
+
+   - Función by() para aplicar una determinada función a algunas columnas de un df segmentando por niveles de un factor `by(columnas, factor, FUN = función)`
+   
+   
+```{r by}
+by(iris[,c(1,3)], iris$Species, FUN = summary)
+
+```
+   
+   - Función `aggregate` y ``by` son equivalentes, pero se visualizan distinto  
+  
+  
+```{r aggregate}
+
+aggregate(cbind(Sepal.Length, Petal.Length)~Species, data = iris, FUN = summary)
+```
+  
+  
+## Diagramas de caja y bigotes
+
+
+   - Ejemplo caja de bigotes mediante la función  `boxplot`
+
+```{r boxplot}
+
+quantile(dados, 0.25)
+quantile(dados,0.5)
+quantile(dados, 0.75)
+
+boxplot(dados, main = "Diagrama de caja") # distribución de una variable
+boxplot(dado, dados, dados2, main = "Diagrama de cajas", names = c("Dado","Dados","Dados2") )
+
+
+# Boxplot de un Dataframe
+
+boxplot(iris[,-5], main = " Data set de iris")
+
+
+```
+
+
+### Configuración de boxplot
+
+```{r bodyboxplot}
+
+body <- read.table("../../data/bodyfat.txt", header = T)
+str(body)
+boxplot(body[,7:9], main = "Data set \"body\"", names = c("Pecho", "Abdomen","Cadera"))
+
+```
+
+   - Si quisiera una comparativa dentro de la misma variable cuantitativa en función de niveles de un factor, indicamos `boxplot(var.num ~factor, data = df)`
+   
+   
+```{r orange}
+
+boxplot(circumference ~ Tree, data = Orange, ylab = "Circunferencia del tronco (mm)", main = "Boxplot de los naranjos en función del tipo de árbol" )
+
+
+str(boxplot(circumference ~ Tree, data = Orange))
+
+boxplot(Sepal.Length ~ Species, data =iris)  # iris
+
+
+boxplot(weight~color, notch = T ,data = cangrejos) # cangrejos
+
+
+```
+
+
+# Ejemplo del insecticida
+
+
+   - **InsectSprays dataset**: Effectiveness of Insect Sprays. The counts of insects in agricultural experimental units treated with different insecticides.
+
+```{r InsectSprays}
+
+str(InsectSprays)
+head(InsectSprays)
+```
+
+
+  - Un resumen de los sprays
+
+```{r by2}
+
+by(InsectSprays$count, InsectSprays$spray, FUN = summary)
+
+```
+
+  - Una medida de dispersión
+
+```{r aggregate2}
+
+aggregate(count~spray, data = InsectSprays, FUN = sd)
+
+```
+
+   
+   - Una gráfica de cajas
+   
+```{r boxplotInsectSprays}
+
+boxplot(count~spray, data=InsectSprays, col = "chocolate3", ylab = "Insectos muertos", xlab = "Tipo de spray")
+
+
+```
+
+
+  
+   
+   
+   

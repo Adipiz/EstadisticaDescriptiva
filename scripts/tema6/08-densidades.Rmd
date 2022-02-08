@@ -1,0 +1,118 @@
+---
+title: 'Tema-09: Densidades y funciones de distribución'
+author: '*Alonso Pizarro Lagunas*'
+date: "24/11/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Densidades y funciones de distribución
+
+- Usando la función density.
+- Una función para calcular histogramas de frecuencias más completos
+
+
+```{r funciondensityHist}
+
+histRel = function(x,L){
+  h = hist(x, breaks = L, right = FALSE, plot = FALSE)
+  t = round(1.1*max(max(density(x)[[2]]),h$density),2)
+  plot(h, freq = F, col = "lightgray",
+       main = "Histograma de frec relativas con\n curva de densidad estimada",
+       xaxt = "n", ylim=c(0,t), xlab = "Intervalos", ylab ="Densidades")
+  axis(1, at = L)
+  text(h$mids, h$density/2, labels= round(h$counts/length(x),2), col = "blue")
+  lines(density(x), col = "purple", lwd = 2) 
+  }
+```
+
+- Vamos a probar la función histRel
+
+
+```{r notas}
+set.seed(4)
+notas = sample(0:10,100, replace = T)
+set.seed(NULL)
+notas
+```
+
+```{r}
+L =  c(0,2,4,6,8,10)
+histRel(notas, L)
+rug(jitter(notas))
+
+```
+
+
+
+- Ahora crearemos un histograma de frecuencias relativas acumuladas
+
+
+```{r HistFreqRelAcum}
+
+histRelCum=function(x,L){
+  h = hist(x, breaks = L, right = F, plot = F)
+  h$density = cumsum(h$counts)/length(x)
+  plot(h, freq = FALSE,
+  main = "Hist de frec. rel. acumuladas\n y curva de distribución estimada",
+  xaxt = "n", col = "lightgray", xlab = "Intervalos",
+  ylab ="Frec. relativas acumuladas")
+axis(1,at = L)
+text(h$mids, h$density/2, labels = round(h$density,2), col="blue")
+dens.x = density(x)
+dens.x$y = cumsum(dens.x$y)*(dens.x$x[2]-dens.x$x[1])
+lines(dens.x, col = "purple", lwd = 2)
+}
+
+```
+
+
+- Aplicando la función anterior a un df 
+```{r HistFreqRelAcumEjemplo }
+L =  c(0,2,4,6,8,10)
+histRelCum(notas, L)
+rug(jitter(notas))
+```
+
+
+
+## Ejemplo 2: usando datos de cangrejos
+
+
+Histogramas básico con función `hist` 
+
+```{r hist1}
+
+crabs = read.table("../../data/datacrab.txt", header = TRUE)
+str(crabs)
+cw = crabs$width
+L1 = min(cw)-1/2*0.1
+A = 1.3
+L = L1 + A*(0:10)
+L
+
+
+hist(cw,breaks = L, right = F, plot = F)
+
+str(density(cw))
+histRel(cw,L)
+
+# agregamos una curva normal
+
+
+histRel(cw,L)
+curve(dnorm(x, mean(cw),sd(cw)), col =c("cyan4"), lty = 4, lwd =2,
+      add =TRUE)
+legend("topright", lwd=c(2,2), lty = c(1,4), col = c("purple","cyan4"),
+       legend = c("densidad estimada", "densidad norma"))
+
+
+```
+
+
+
+
+
+
+

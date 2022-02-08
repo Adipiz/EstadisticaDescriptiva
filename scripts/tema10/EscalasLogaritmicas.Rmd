@@ -1,0 +1,99 @@
+---
+title: 'Tema-09: Transformaciones Logarítmicas'
+author: "Alonso Pizarro Lagunas"
+date: "30/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Escalas Logarítmicas
+
+  - Si estamos representando unos puntos $(x_i,y_i)_{i=1,...,n}$ en **escala semilogarítmica** observamos que siguen aproximadamente una recta. Es decir, los valores de $log(y)$ siguen una ley lineal en los valores de $x$. 
+  
+  - Se dice que y sigue una *ley exponencial en x*. Esto es, si $log(y) = ax + b$, entonces, $$y=10^{log(y)}$$ o $y=10^{ax+b} = \alpha^x \beta$
+  
+
+  - Por otro lado, si estamos representando unos puntos $(x_i,y_i)_{i =1,...,n}$ en **escala doble logarítmica** observamos que siguen una recta. Esto querrá decir que los valores $log(y)$ siguen una ley lineal aproximadamente en los valores $log(x)$.
+  
+  - Se dice que y sigue una *ley aproximadamente potencial en x*. Esto es, si $log(y) = alog(x)+b$ se desprende que, $$y=10^{alog(x)+b} = x^{\alpha}\beta$$.
+  
+
+## Ejemplo
+
+
+```{r ejemplo2}
+dep = c(1.2,3.6,12,36)
+ind = c(20,35,61,82)
+
+
+plot(ind,dep, main = 'Escala Lineal')
+plot(ind,dep,log = "y", main = 'Escala Semilogarítmica')
+lm(log10(dep)~ind)
+summary(lm(log10(dep)~ind))$r.squared
+```
+  
+   - Los coeficientes son, $\beta =$ `r coefficients(lm(log10(dep)~ind))[[1]]` y $\alpha =$ `r coefficients(lm(log10(dep)~ind))[[2]]`. 
+   - Como lo ilustra el modelo *semilog* escribimos como $$log(dep)=`r round(coefficients(lm(log10(dep)~ind))[[2]],3)` x `r round( coefficients(lm(log10(dep)~ind))[[1]],3)`$$, con lo cual, el modelo se expresaría
+   $$dep = 10^{`r round(coefficients(lm(log10(dep)~ind))[[2]],3)`} x \cdot 10^{`r round( coefficients(lm(log10(dep)~ind))[[1]],3)`}$$
+   - Dibujamos la curva con respecto  a nuestro modelo, quedando,
+   
+   
+```{r ejemplo2b}
+# par(mfrow = c(1,2))
+plot(ind,dep,main = "Curva de Regresión")
+curve(1.054^x*0.468, add = T, col ="purple")
+```
+   
+   
+## Ejemplo con escalas doblelogarítmica
+
+
+```{r ejemplo3}
+
+tiempo = 1:10
+gramos = c(0.097,0.709,2.698,6.928,15.242,29.944, 52.902,83.903,120.612,161.711)
+d.f = data.frame(tiempo,gramos)
+```
+
+  - Graficamos los datos con los tres modelos
+  
+```{r ejemplo3v}
+
+ par(mfrow =c(1,3))
+ plot(d.f)
+ plot(d.f, log = "y")
+ plot(d.f, log = "xy")
+
+
+```
+
+  - Como muestran los datos, en el tercer gráfico al parecer hay una relación potencial entre los gramos y el tiempo.
+  
+  - Aplicando el modelo de escala doble logarítmica:
+
+```{r ejercicio3c}
+
+
+lm(log10(gramos)~log10(tiempo))
+beta = coefficients(summary(lm(log10(gramos)~log10(tiempo))))[[1]]
+alpha = coefficients(summary(lm(log10(gramos)~log10(tiempo))))[[2]]
+r.2 = summary(lm(log10(gramos)~log10(tiempo)))$r.squared
+```
+   - El modelo de escala doble logaritmico que se obtuvo corresponde a $$log(gramos) = `r round(alpha,3)` log(tiempo) + `r round(beta,3)` $$.
+   - El modelo potencial estimado es $y = tiempo^{`r round(alpha,3)`}\cdot 10^{`r round(beta,3)`}$
+
+
+```{r ejercicio3d}
+
+plot(d.f, main = "Curva de regresión")
+curve(x^round(alpha,3)* 10^round(beta,3), col='purple', add= T)
+
+```
+
+  
+  
+  
+  

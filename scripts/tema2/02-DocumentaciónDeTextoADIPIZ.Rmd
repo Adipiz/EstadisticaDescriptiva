@@ -1,0 +1,22 @@
+---
+title: 'Tema 2 : Documentación de texto'
+author: "Alonso Pizarro Lagunas"
+date: "13/10/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Título 1
+
+## Título 2
+
+### Título 3
+
+#### Título 4
+
+##### Título 5 
+
+Luego podemos añadir texto y trozos de código de `R` y lo que quieramos en $\LaTeX$.
+
+

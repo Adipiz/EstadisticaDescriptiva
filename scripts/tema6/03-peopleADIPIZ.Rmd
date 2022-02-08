@@ -1,0 +1,164 @@
+---
+title: "03-People Adipiz"
+author: "Alonso Pizarro Lagunas"
+date: "29/10/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Ejemplo color de pelos y ojos
+
+ - La tabla *HairEyeColor* tiene datos agregados.
+
+```{r haireyecolor, comment=NA}
+
+HairEyeColor
+
+sum(HairEyeColor) -> total
+```
+
+El total de individuos de la tabla de datos es `r total`
+
+
+  - Ahora podemos calcular las frecuencias relativas marginales
+
+```{r freqMargin1, comment=NA}
+
+prop.table(HairEyeColor, margin = 1)
+prop.table(HairEyeColor, margin = c(1,2))
+```
+
+
+  - Cambiando el orden de la tabla con la función `aperm()`
+  
+```{r aperm, comment=NA}
+
+aperm(HairEyeColor, perm = c("Sex", "Hair", "Eye"))
+```
+
+
+
+  - Importando la librería `kable`
+  
+```{r kable, comment = NA, eval=FALSE}
+library(kableExtra)
+kable(HairEyeColor)
+
+```
+
+
+    - Otra librería para manejar tablas `xtable`
+    
+
+```{r xtable, warning=FALSE, comment=NA, results = 'asis'}
+
+library(xtable)
+sex = factor(c("H","M","M","M","H","H","M","M"))
+ans = factor(c("S","N","S","S","S","N","N","S"))
+
+xtable(table(sex,ans))
+```
+
+
+
+
+# Diagrama de barras
+
+El **diagrama de barras** es el tipo de gráfico más usado para representar variables cualitativas, en donde para cada nivel de la variable cualitativa hay una barra con su frecuencia dentro de esa variable. 
+
+```{r barplot}
+par(mfrow = c(1,2))
+
+Sex = sample(c("H","M"), 11, replace = TRUE)
+barplot(table(Sex), col = c("lightblue", "pink"), main ="Diagrama de barras de\n las frecuencias absolutas\n de la variable 'Sexo'")
+
+
+barplot(prop.table(table(Sex)), main ="Diagrama de barras de\n las frecuencias relativas\n de la variable 'Sexo'")
+```
+
+
+```{r barplotHorizon}
+Sex = factor(sample(c("H","M"), 12, replace = TRUE))
+barplot(prop.table(table(Sex)), main ="Diagrama de barras de\n las frecuencias relativas\n de la variable 'Sexo'", horiz = TRUE)
+```
+
+
+
+```{r BARPLOTAPILADOS}
+
+Respuestas = factor(sample(c('Si', 'No'), size=12, replace = TRUE))
+Sex = factor(sample(c("H","M"), size = 12, replace = TRUE))
+
+par(mfrow = c(1,3))
+barplot(table(Sex),col = c('gray','white'), ylim = c(0,10), main ="Sex")
+barplot(table(Respuestas), col = c('black', 'gray'),ylim = c(0,10), legend.text = T, main = "Respuestas")
+barplot(table(Sex, Respuestas),ylim = c(0,10), legend.text = T, main = "Distribución abs Sex/Respuestas")
+```
+
+
+
+```{r BARPLOTporbloque}
+
+Respuestas = factor(sample(c('Si', 'No'), size=12, replace = TRUE))
+Sex = factor(sample(c("H","M"), size = 12, replace = TRUE))
+
+
+barplot(table(Sex, Respuestas),ylim = c(0,8), beside = T,legend.text = T, main = "Distribución abs Sex/Respuestas")
+
+barplot(table(Respuestas, Sex),ylim = c(0,8), names = c("Hombre", "Mujer") ,beside = T,legend.text = T, main = "Distribución abs Respuestas/sex", args.legend = list(x = 'topright'))
+
+```
+
+
+
+```{r, eval = F}
+barplot(height = cbind(x = c(465, 91) / 465 * 100,
+                       y = c(840, 200) / 840 * 100,
+                       z = c(37, 17) / 37 * 100),
+        beside = FALSE,
+        width = c(465, 840, 37),
+        col = c(1, 2),
+        legend.text = c("A", "B"),
+        args.legend = list(x = "topleft"))
+```
+
+
+
+# Diagrama circular
+
+ - Los **diagramas circulares** (o *pie chart*) se representan los niveles de una variable
+ cualitativa como sectores de un círculo, de manera que el ángulo del círculo es proporcional a la frecuencia del nivel.
+ - Se aplica a una tabla de frecuencias y no al vector original.
+ - De difícil visualización. Es complicado comparar los niveles de la variable analizada
+ 
+```{r pie, fig.align='center'}
+
+x = c(4,2,3,5,1,4,3,1,5,2,3,2)
+pie(table(x), main = "diagrama de la variable x")
+
+```
+ 
+ 
+ 
+# Gráficos de mosaico
+
+En estos **gráficos de mosaico** se obtienen sustituyendo cada entrada  de la tabla de frecuencias por una región rectangular de área proporcional a su valor.
+
+    - Complicado de leer cuando se agregan variables
+
+```{r mosaico}
+
+plot(table(Sex, Respuestas), main ="Gráfico de mosaico")
+
+```
+
+```{r mosaicoHEC}
+
+plot(HairEyeColor, main = "Gráfica de la tabla HairEyeColor", col = c("pink", "lightblue"))
+
+```
+
+
+
+

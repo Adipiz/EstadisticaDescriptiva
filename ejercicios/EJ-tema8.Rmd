@@ -1,0 +1,104 @@
+---
+title: "Tema-08"
+author: "Alonso Pizarro Lagunas"
+date: "24/11/2021"
+output: html_document
+---
+
+# Ejercicio: Encuesta de las calificaciones de un bachillerato
+
+  - Primero construimos una muestra de 100 notas aleatoriamente
+
+```{r notas}
+set.seed(4)
+notas = sample(0:10,100, replace = T)
+set.seed(NULL)
+notas
+```
+
+  - Creamos los intervalos
+
+```{r intervals}
+
+L = c(0,5,7,9,10)
+
+# La nueva variable notas1 identificará a cada fila de la variable notas con un intervalo
+
+notas1 = cut(notas, breaks = L, right = FALSE, include.lowest = TRUE)
+notas1
+```
+  
+   - Definimos las marcas de clase como la suma de los extremos de los intervalos dividido en dos.
+
+```{r MarcasClase}
+
+MC = (L[1:length(L)-1]+L[2:length(L)])/2  # Este corresponde al vector de marcas de clase
+
+# Vamos a crear una columna con las marcas de clase llamada notas 2
+
+notas2 = cut(notas, breaks = L, labels = MC, right = F, include.lowest = TRUE)
+notas2
+```
+
+   - La codificación del intervalos tambiém puede ser por orden
+   
+```{r codeinterval}
+
+notas3 = cut(notas, breaks = L, labels = F, right = F, include.lowest = T)
+notas3
+```
+   
+   -Por otra parte, si se requiere renombrar las etiquetas a discreción. Entonces, los niveles del factor notas renombrado queda.
+   
+```{r renombraretiquetadeintervalo}
+
+notas4 = cut(notas, breaks = L, labels = c("Susp","Aprob","Notable", "Exc"), right = FALSE, include.lowest = TRUE)
+notas4
+```
+   
+   - Frecuencias absolutas y acumuladas
+   
+```{r frecabs}
+
+table(notas4)
+cumsum(table(notas4))
+```
+   
+   - Frecuencias Relativas y acumuladas
+
+```{r frecrel}
+prop.table(table(notas4))
+
+cumsum(prop.table(table(notas4)))
+```
+   
+   
+   - usando la función hist
+   
+```{r hist}
+
+notasHist = hist(notas, breaks = L, right = FALSE, include.lowest = TRUE, plot = FALSE)
+FAbs=notasHist$count
+FRel=prop.table(FAbs) 
+FAbsCum=cumsum(FAbs)
+FRelCum=cumsum(FRel)
+```
+   
+   
+   - Ahora, una tabla resumen
+   
+```{r tablaResumen}
+
+intervalos =c("[0,5)","[5,7)", "[7,9)","[9,10]")
+calificacion = c("Suspenso","Aprobado","Notable", "Excelente")
+marcas = notasHist$mids
+tabla.Fr = data.frame(intervalos, calificacion, marcas, FAbs, FAbsCum, FRel, FRelCum)
+tabla.Fr
+```
+   
+   
+   
+   
+   
+  
+  

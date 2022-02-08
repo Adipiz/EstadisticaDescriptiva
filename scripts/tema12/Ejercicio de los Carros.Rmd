@@ -1,0 +1,132 @@
+---
+title: "Ejercicio de los carros"
+author: "*Alonso Pizarro Lagunas*"
+date: "*23/12/2021*"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE, cache=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+use_python("/../Users/sept/anaconda3/python")
+```
+
+
+## Análisis de los coches con database 'mtcars' de ggplot
+
+
+```{r}
+library(ggplot2)
+mtcars <-  mtcars
+```
+
+
+### Carga de datos en `Python`.
+
+```{python}
+import pandas as pd     # Pandas
+import numpy  as np     # Numpy 
+import matplotlib.pyplot as plt  # Matplotlib 
+
+
+mtcars = r.mtcars       # El DF que se cargo desde R ahora lo cargamos en python 
+print(mtcars.shape)     # Vemos la dimensión de nuestra data 
+print(mtcars.head())    # Visualizamos las primeras líneas de data
+```
+
+
+### Medidas de Centralización
+
+```{python}
+print(mtcars.mean())    # Media de cada una de las columnas
+print(mtcars.mean(axis = 1))  # Media por filas (Nota que esto no hace mucho sentido)
+print(mtcars.median()) # Mediana para cada una de las columnas
+
+print(mtcars['mpg'].mean()) # media para la columna de 'mpg'
+
+```
+
+### Medidas contra distribuciones
+
+```{python, fig.align='center'}
+normData = pd.DataFrame(np.random.normal(size=100000)) # Generamos datos normalmente dist.
+
+normData.plot(kind = 'density', figsize=(10,10)) # Grafica
+plt.vlines(normData.mean(), ymin = 0, ymax = 0.4,
+linewidth=5.0, color = "blue")
+plt.vlines(normData.median(), ymin = 0, ymax = 0.4,
+linewidth=2.5, color = "red")
+plt.title('Distribucion normal')
+plt.show()
+```
+
+### Muestras con sesgos
+
+
+```{python, fig.align='center'}
+skewedData = pd.DataFrame(np.random.exponential(size=100000)) # Generamos datos exp dist.
+
+skewedData.plot(kind = 'density', figsize=(10,10), xlim = (-1,5)) # Grafica
+plt.vlines(skewedData.mean(), ymin = 0, ymax = 1.0,
+linewidth=5.0, color = "blue")
+plt.vlines(skewedData.median(), ymin = 0, ymax = 1.0,
+linewidth=2.5, color = "red")
+plt.title('Distribucion sesgada')
+plt.show()
+```
+
+
+
+## Cómo sufre la media cuando añadimos outliers en los datos
+
+```{python}
+normData = np.random.normal(size = 50)
+outliers = np.random.normal(15, size = 3)
+
+newData = pd.DataFrame(np.concatenate((normData,outliers), axis = 0))
+```
+
+
+### Medidas de dispersión
+
+  - Rango de 'mpg', five nums
+```{python}
+
+rango = max(mtcars['mpg'])- min(mtcars['mpg'])
+print(rango)
+
+
+five_nums =[mtcars['mpg'].quantile(0),
+          mtcars['mpg'].quantile(0.25),
+          mtcars['mpg'].quantile(0.5),
+          mtcars['mpg'].quantile(0.75),
+          mtcars['mpg'].quantile(1.0)]
+print(five_nums)
+
+
+print(mtcars['mpg'].describe())
+
+print( mtcars['mpg'].quantile(0.25) - mtcars['mpg'].quantile(0.75))
+
+mtcars.boxplot(column = 'mpg', return_type="axes", figsize=(10,10))
+plt.text(0.75, y = mtcars['mpg'].quantile(0.25), s = "1er cuartil")
+plt.text(0.75, y = mtcars['mpg'].quantile(0.5), s = "mediana")
+plt.text(0.75, y = mtcars['mpg'].quantile(0.75), s = "3er cuartil")
+plt.text(0.75, y = mtcars['mpg'].quantile(0), s = "min")
+plt.text(0.75, y = mtcars['mpg'].quantile(1.0), s = "max")
+plt.show()
+```
+
+- Varianza y desviación típica
+
+```{python}
+
+print(mtcars['mpg'].var())
+print(mtcars['mpg'].std())
+```
+
+
+
+

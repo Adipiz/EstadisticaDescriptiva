@@ -1,0 +1,296 @@
+---
+title: 'Tema 08: Datos Cuantitativos Agrupados'
+author: "Alonso Pizarro Lagunas"
+date: "12/11/2021"
+output: html_document
+---
+
+
+# Agrupación de datos cuantitativos
+
+## Cómo agrupamos los datos
+
+  - Definimos el número de los intervalos
+  - Decidir la amplitud de los intervalos
+  - Acumular los exctremos de los intervalos
+  - Calcular el valor represenytativo de cada intervalo, o marca de clase
+  
+### Número de clases
+
+ - Establecer el número de clases según la regla de la raíz cuadrada que consiste en tomar la parte entera de la raiz del número de obs $$ k= \lceil\sqrt n\rceil$$.
+ - Por otro lado, con la **regla de Sturges** $$k = \lceil1+ \log_{2}(n)\rceil$$
+ - Con la **regla de Scott** se determina la amplitud teórica $A_{s} = 3.5 \cdot\tilde{s} \cdot n^{-\frac{1}{3}}$ donde $\tilde{s}$ es la desviación estándar muestral. Luego se sigue que el número de clases queda $$k =\bigg\lceil{\frac{max(x)-min(x)}{A_{s}}}\bigg\rceil$$
+ - La **regla de Freedman-Diaconis**  determina una amplitud teórica de las clases $A_{FD}=2 \cdot (Q_{0.75} - Q_{0.25})\cdot n^{-\frac{1}{3}}$, de esta manera el número de clases, que dependen del primer y tercer cuartil, queda: $$k =\bigg\lceil{\frac{max(x)-min(x)}{A_{FD}}}\bigg\rceil$$
+ 
+### Decidiendo la amplitud
+
+  - Una vez que se determina *k*, hay que decidir su amplitud. En general, o por defecto, la amplitud de todos los intervalos serán iguales.
+  
+### Extremos de un intervalo
+
+  - Los intervalos son cerrados por la izquierda, pero abiertos por la derecha. $[L_1,L2),[L_2,L_3),...,[L_k,L_{k+1})$
+
+  - $L_i$ denota los extremos de los intervalos. $$L_1 = min(x) - \frac{1}{2} \cdot precisión$$
+  
+  
+### Marca de clase
+
+  - La marca de clase es una valor, $X_i$, de cada intervalo $[L_i, L_{i+1})$ que se utiliza para identificar la clase.
+  $$X_i=\frac{L_i+L_{i+1}}{2}$$
+  
+
+
+## Ejercicio 
+  
+```{r datacrab}
+cangrejos = read.table("../../data/datacrab.txt", header = TRUE)
+str(cangrejos)
+cw = cangrejos$width
+
+# Calculando el número de clases
+
+n = length(cw)
+k1 = ceiling(sqrt(n))
+k1
+# Regla de Sturges
+
+k2 = ceiling(1+log(n,2))
+k2
+nclass.Sturges(cw)
+
+
+# Regla de Scott
+
+As = 3.5 * sd(cw)*n^(-1/3)  # amplitud teória 
+k3 = ceiling((max(cw)-min(cw))/As)
+k3
+nclass.scott(cw)
+
+
+# Regla de Freedman-Diaconis
+
+
+Afd = 2* IQR(cw)*n^(-1/3)
+k4 = ceiling((max(cw)-min(cw))/Afd)
+k4
+nclass.FD(cw)
+
+
+# Amplitud de los intervalos 
+
+A = diff(range(cw))/k3
+A = 1.3 # la precisión se ajusta a los datos en una unidad 
+
+L1 = min(cw)-1/2 * 0.1
+
+# Los intervalos se construyen a partir
+L = L1 + A*(0:10)
+L
+
+# Las Marcas de clases se construyen como Xi+1 = xi + A donde xi = (li + li+1)/2 
+
+x1 = (L[1] +L[2])/2
+
+
+X = x1 + A*(0:9)
+X
+```
+
+#### La función Cut
+
+```{r funcioncut}
+
+
+petals = iris$Petal.Length
+petals
+irisDF = iris
+
+irisDF$dv1 = cut(petals, breaks = 5, right = FALSE)  # sin especificar regla
+irisDF$dv2 = cut(petals, breaks = ceiling(sqrt(length(petals))), right = FALSE)
+irisDF$dv3 = cut(petals, breaks = c(1,2,3,4,5,6,7), right = FALSE)
+irisDF$dv4 = cut(petals, breaks = 5, right = FALSE, labels = FALSE) # Toma con ref el num de los intervalos.
+irisDF$dv5 = cut(petals, breaks = 5, right = FALSE, labels = c("Peq","Norm","Gran","XGran","Gigan"))
+irisDF[,c(3,5:10)]
+```
+
+
+### Agrupando datos
+
+  - Tabla de frecuencias absolutas y relativas con datos agrupados
+  - Diferentes codificación de la variable cuantitativa
+
+```{r freqDatosAgrupados}
+
+# Generando una función 
+
+TablaFrecs = function(x,k,A,p){
+  L = min(x) - 1/2 * p + A*(0:k)
+  x_cut = cut(x, breaks = L, right = FALSE)
+  intervals = levels(x_cut)
+  mc = (L[1]+L[2])/2 + A*(0:(k-1))
+  Fr.abs = as.vector(table(x_cut))
+  Fr.rel = round(Fr.abs/length(x),4)
+  Fr.cum.abs = cumsum(Fr.abs)
+  Fr.cum.rel = cumsum(Fr.rel)
+  tabla = data.frame(intervals, mc, Fr.abs, Fr.cum.abs, Fr.rel, Fr.cum.rel)
+  tabla
+} 
+
+```
+
+La tabla de frecuencias de la longitud de los pétalos de *Iris* es:
+
+```{r tablafreq}
+petals
+TablaFrecs(petals, k = 6, A = 1, p = 0.1)
+```
+
+
+Utilizando la tabla de los cangrejos echaremos manos a nuestra función de frecuencias de datso agrupados.
+
+```{r datacangrejos}
+
+tabla = TablaFrecs(cangrejos$width, k = 10, A = 1.3 , p = 0.1 )
+```
+
+
+
+# Estadísticos para datos agrupados
+
+
+
+```{r}
+TOT = tabla$Fr.cum.abs[10]
+TOT
+```
+
+   - La media para datos agrupados es $\bar{x}=\frac{\sum_{j=1}^k n_j \cdot X_{j}^2}{n}$ donde $n_j$ es la frecuencia absoluta y $X_j$ es la marca de clase.
+   
+```{r media}
+
+anchura.media = round(sum(tabla$mc * tabla$Fr.abs)/TOT,3)
+anchura.media
+
+```
+     
+  - Por tanto, la anchura media para datos agrupados es *`r anchura.media`*
+   
+   
+  - La *varianza* para datos agrupados la podemos definir como $s^2=\frac{\sum_{j=1}^k n_j X_j^2}{n}-\bar x^2$    
+
+  
+```{r varianzada}
+
+varianza.media = round(sum(tabla$mc^2 * tabla$Fr.abs)/TOT - anchura.media^2,3)
+varianza.media
+```
+
+  - La varianza será  *`r varianza.media`*
+  
+  - La desviación típica se calcula aplicando la raíz a la varianza para datso agrupados
+  
+```{r dtanchuras}
+
+anchura.dt = round(sqrt(varianza.media),3)
+anchura.dt
+
+```
+   - La *desviación* típica de las anchura de los cangrejos correspondientes es *`r anchura.dt`*
+  
+   - Ahora vamos con el interval modal
+
+```{r imodal}
+I.modal = tabla$intervals[which(tabla$Fr.abs== max(tabla$Fr.abs))]
+I.modal
+```
+   - El intervalo modfal para este conjuntio de datos de anchuras corresponde a *`r I.modal`*
+    
+   - De fomra similar podemos agregar el *intervalo crítico* para la mediana.
+   
+```{r icritic}
+I.critic = tabla$intervals[which(tabla$Fr.cum.rel >= 0.5)]
+I.critic
+```
+   - El el intervalo donde la distribución de datos comprende o supera al 50% de los datos es `r I.critic[1]` 
+  
+
+   - Estimación de la *mediana* de los datos reales
+   
+```{r MEDIANEST}
+L
+n = TOT
+Lc= L[4]  # límite inferior
+Lc.pos = L[5]
+Ac = L[5] - L[4] # amplitu del intervalo
+Nc.ant = tabla$Fr.cum.abs[3] # FRec acumulada del anterior (respecto al 4)
+nc = tabla$Fr.abs[4]
+M = Lc+Ac*((n/2)-Nc.ant)/nc   # formula para la mediana
+M # aproximaicón de la mediana
+
+median(cw) # todos los datos
+
+```
+   
+#### Hacer tarea video 143
+
+
+# Histogramas
+
+  - Mejor manera de representar datos agrupados. Barras juntas, los datos son cuantritaticos continuos.
+  - El diagrama de barras se utiliza para cualidades, factores. Construidos con barras separadas.
+
+```{r histagrup}
+
+# Creando una función para graficar histogramas
+
+
+histAbs = function(x,L){
+
+  h = hist(x, breaks = L, right = FALSE, freq = FALSE,
+           yaxt= "n", col = "lightgray",
+           main = "Histograma de frecuencias absolutas",
+           xlab = "Intervalos y marcas de clase", ylab = "Frecuencias absolutas")
+  axis(1,at=L)
+  rug(x)
+  jitter(x)
+  text(h$mids, h$density/2, labels = h$counts, col ="purple") # aquí ponemos el número en cada barra
+}
+
+histAbs(cangrejos$width, 9)
+l <- hist(rnorm(120))
+str(l)
+nclass.Sturges(cangrejos$width)
+```
+
+
+
+
+
+
+```{r}
+
+histAbsCum = function(x,L){
+    h = hist(x, breaks = L, right = FALSE, plot = FALSE)
+    h$density = cumsum(h$density)
+    plot(h, freq = FALSE, yaxt = "n", col = "lightgray",
+         main = "Histograma de frecuencias absolutas acumuladas",
+         xlab = "intervalos", 
+         ylab = "Frec. absolutasacumuladas")
+    axis(1, at = L)
+    rug(x)
+    text(h$mids, h$density/2, labels = cumsum(h$counts), col ="purple")
+}
+
+str(histAbsCum(cangrejos$width, 6))
+```
+  
+  
+
+
+```{r}
+chickwts
+```
+
+ 
+ 
+

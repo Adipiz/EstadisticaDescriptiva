@@ -1,0 +1,53 @@
+---
+title: "Matrices"
+author: "Alonso Pizarro Lagunas"
+date: "13/10/2021"
+output: html_document
+---
+
+
+
+# Ejemplo de sintaxis de matrices y sistemas de ecuaciones en Rmd
+
+## Ejemplo sintaxis de matrices 
+
+$ x \cdot y$
+
+$$(\frac{a}{b})$$
+
+_Como escribir matrices_
+$$\begin{matrix} a_{11} & a_{12} & a_{13}\\ a_{21} & a_{22} & a_{23} \end{matrix}$$ 
+
+*Quiero escribir la matriz con paréntesis*
+
+$\prod_{1=1}^n i $
+
+$$ \begin{pmatrix} a_{11} & a_{12} & a_{13}\\ a_{21} & a_{22} & a_{23} \end{pmatrix}$$
+
+*Quiero escribir la matriz con barras verticales como un determinante*
+
+$$ \begin{vmatrix} a_{11} & a_{12} & a_{13}\\ a_{21} & a_{22} & a_{23} \end{vmatrix}$$
+
+*Quiero escribir la matriz en corchetes*
+
+$$ \begin{bmatrix} a_{11} & a_{12} & a_{13}\\ a_{21} & a_{22} & a_{23} \end{bmatrix}$$
+*Escribir la matriz entre llaves*
+
+$$ \begin{Bmatrix} a_{11} & a_{12} & a_{13}\\ a_{21} & a_{22} & a_{23} \end{Bmatrix}$$
+
+*Escribir la matriz entre barras dobles*
+
+$$ \begin{Vmatrix} a_{11} & a_{12} & a_{13}\\ a_{21} & a_{22} & a_{23} \end{Vmatrix}$$
+
+## Ejemplo sinatxis de sistemas de ecuaciones
+
+*Ejemplo 1*
+
+$$\left.\begin{array}{l} ax + by = c \\ ex-fy=g \end{array}\right\}$$
+*Ejemplo 2*
+
+$$|x| = \left\{\begin{array}{rr} -x & \text{si }x\le 0\\ x &
+\text{si }x\ge 0 \end{array}\right.$$
+
+
+
